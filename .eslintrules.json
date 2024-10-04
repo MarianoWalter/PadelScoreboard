@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "rules": {
+    "eqeqeq": "error",
+    "semi": "error",
+    "arrow-spacing": "error",
+    "arrow-parens": "error",
+    "comma-spacing": "error",
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "no-alert": "error",
+    "no-console": "warn",
+    "no-unused-expressions": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-unused-vars": "error",
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "markers": [
+          "/"
+        ]
+      }
+    ],
+    "quotes": [
+      "warn",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "space-unary-ops": "error",
+    "space-before-blocks": "error",
+    "space-in-parens": "error",
+    "space-infix-ops": "error",
+    "no-spaced-func": "error",
+    "no-trailing-spaces": "warn",
+    "no-multi-spaces": "warn",
+    "jsx-quotes": "error",
+    "react/react-in-jsx-scope": "off",
+    "react/self-closing-comp": "warn",
+    "react-refresh/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ]
+  }
+}
