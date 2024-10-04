@@ -1,0 +1,24 @@
+.match-score{
+  display: flex;
+  flex-direction: column;
+}
+
+.score-row {
+  display: flex;
+  gap: 8px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.score-label {
+  flex: 0;
+}
+.team-1-score,.team-2-score {
+  flex: 1;
+}
+.team-1-score {
+  text-align: right;
+}
+.team-2-score {
+  text-align: left;
+}
