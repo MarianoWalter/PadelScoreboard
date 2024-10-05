@@ -49,7 +49,7 @@ export const isSetPoint = (currentStep: Step): 'A' | 'B' | false => {
   return false;
 };
 
-export const isMatchPoint = (currentStep: Step, totalSets = 3): 'A' | 'B' | false => {
+export const isMatchPoint = (currentStep: Step, totalSets: 3 | 5 = 3): 'A' | 'B' | false => {
   const setsGoal = Math.ceil(totalSets / 2);
   const teamWithSetPoint = isSetPoint(currentStep);
 
