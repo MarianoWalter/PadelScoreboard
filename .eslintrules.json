@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/eslintrc",
   "rules": {
     "eqeqeq": "error",
-    "semi": "error",
+    "semi": "warn",
     "arrow-spacing": "error",
     "arrow-parens": "error",
     "comma-spacing": "error",
@@ -32,10 +32,10 @@
         "avoidEscape": true
       }
     ],
-    "space-unary-ops": "error",
-    "space-before-blocks": "error",
-    "space-in-parens": "error",
-    "space-infix-ops": "error",
+    "space-unary-ops": "warn",
+    "space-before-blocks": "warn",
+    "space-in-parens": "warn",
+    "space-infix-ops": "warn",
     "no-spaced-func": "error",
     "no-trailing-spaces": "warn",
     "no-multi-spaces": "warn",

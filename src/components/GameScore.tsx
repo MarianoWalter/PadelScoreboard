@@ -1,38 +1,61 @@
 import type { FC } from 'react';
-import './GameScore.css';
+import './GameScore.less';
+import MatchPointMessage from './MatchPointMessage';
+import SetPointMessage from './SetPointMessage';
+import TieBreakMessage from './TieBreakMessage';
 
 type Props = {
   score: [number | 'AD', number | 'AD'];
-  onTeam1Scored: () => void;
-  onTeam2Scored: () => void;
+  onTeamAScored: () => void;
+  onTeamBScored: () => void;
+  isTieBreak: boolean;
+  setPointTeamA: boolean;
+  setPointTeamB: boolean;
+  matchPointTeamA: boolean;
+  matchPointTeamB: boolean;
 };
 
 const GameScore: FC<Props> = ({
-  score: [team1Score, team2Score],
-  onTeam1Scored,
-  onTeam2Scored,
+  score,
+  onTeamAScored,
+  onTeamBScored,
+  isTieBreak,
+  setPointTeamA,
+  setPointTeamB,
+  matchPointTeamA,
+  matchPointTeamB,
 }) => {
+  const teamAScore = score[1] === 'AD' ? '' : score[0];
+  const teamBScore = score[0] === 'AD' ? '' : score[1];
+
   return (
     <div className="game-score">
-      <div className="team-1-button-container">
-        <button className="add-score-button" onClick={onTeam1Scored}>
-          +
-        </button>
-      </div>
-
       <div className="current-game-scores">
-        <div className="team-game-score-value team-1-game-score-value">
-          {team2Score === 'AD' ? '' : team1Score}
-        </div>
-        <div className="team-game-score-value team-2-game-score-value">
-          {team1Score === 'AD' ? '' : team2Score}
-        </div>
-      </div>
+        <div className="field" onClick={onTeamAScored}>
+          <div className="field-divisor" />
 
-      <div className="team-2-button-container">
-        <button className="add-score-button" onClick={onTeam2Scored}>
-          +
-        </button>
+          {matchPointTeamA ? (
+            <MatchPointMessage />
+          ) : setPointTeamA ? (
+            <SetPointMessage team="A" />
+          ) : undefined}
+
+          <div className="team-game-score-value team-blue">{teamAScore}</div>
+        </div>
+
+        <div className="field" onClick={onTeamBScored}>
+          <div className="field-divisor" />
+
+          {matchPointTeamB ? (
+            <MatchPointMessage />
+          ) : setPointTeamB ? (
+            <SetPointMessage team="B" />
+          ) : undefined}
+
+          <div className="team-game-score-value team-red">{teamBScore}</div>
+        </div>
+
+        {isTieBreak && <TieBreakMessage />}
       </div>
     </div>
   );
