@@ -26,7 +26,7 @@ const MatchScore: FC<Props> = ({ sets, numberOfSets = 3 }) => {
       {totalSets.map((_, index) => {
         const set = sets[index];
         const [a, b] = set ?? [0, 0];
-        const finished = isSetFinished(set);
+        const finished = isSetFinished(set ?? [0, 0]);
         const aWon = finished && a > b;
         const bWon = finished && b > a;
 
