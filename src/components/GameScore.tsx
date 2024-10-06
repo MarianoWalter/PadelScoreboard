@@ -1,11 +1,16 @@
+import classNames from 'classnames';
 import type { FC } from 'react';
+import type { Team } from '../domain/Game';
 import './GameScore.less';
 import MatchPointMessage from './MatchPointMessage';
 import SetPointMessage from './SetPointMessage';
+import TennisBallSVG from './TennisBallSVG';
 import TieBreakMessage from './TieBreakMessage';
 
 type Props = {
   score: [number | 'AD', number | 'AD'];
+  service: Team;
+  even: boolean;
   onTeamAScored: () => void;
   onTeamBScored: () => void;
   isTieBreak: boolean;
@@ -17,6 +22,8 @@ type Props = {
 
 const GameScore: FC<Props> = ({
   score,
+  service,
+  even,
   onTeamAScored,
   onTeamBScored,
   isTieBreak,
@@ -34,6 +41,10 @@ const GameScore: FC<Props> = ({
         <div className="field" onClick={onTeamAScored}>
           <div className="field-divisor" />
 
+          {service === 'A' && (
+            <TennisBallSVG className={classNames('left', { top: !even, bottom: even })} />
+          )}
+
           {matchPointTeamA ? (
             <MatchPointMessage />
           ) : setPointTeamA ? (
@@ -45,6 +56,10 @@ const GameScore: FC<Props> = ({
 
         <div className="field" onClick={onTeamBScored}>
           <div className="field-divisor" />
+
+          {service === 'B' && (
+            <TennisBallSVG className={classNames('right', { top: even, bottom: !even })} />
+          )}
 
           {matchPointTeamB ? (
             <MatchPointMessage />

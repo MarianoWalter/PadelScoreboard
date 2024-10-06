@@ -1,10 +1,11 @@
 export type GameValue = 0 | 15 | 30 | 40 | 'AD';
 
+export type Team = 'A' | 'B';
+
 export type Step = {
-  sets: [number, number];
-  games: [number, number];
+  sets: [number, number][];
   points: [number, number];
-  isTieBreak: boolean;
+  service: Team;
 };
 
 export type Game = {

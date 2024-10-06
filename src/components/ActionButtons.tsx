@@ -6,17 +6,22 @@ type Props = {
   canRedo: boolean;
   undo: () => void;
   redo: () => void;
+  changeService: () => void;
 };
 
-const ActionButtons: FC<Props> = ({ canUndo, canRedo, undo, redo }) => {
+const ActionButtons: FC<Props> = ({ canUndo, canRedo, undo, redo, changeService }) => {
   return (
     <div id="action-buttons">
       <button id="undo-button" disabled={!canUndo} onClick={undo}>
         Deshacer
       </button>
-      &nbsp;
+
       <button id="redo-button" disabled={!canRedo} onClick={redo}>
         Rehacer
+      </button>
+
+      <button id="change-service-button" onClick={changeService}>
+        Cambiar servicio
       </button>
     </div>
   );

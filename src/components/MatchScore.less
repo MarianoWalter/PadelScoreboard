@@ -1,28 +1,34 @@
 #match-score {
   display: flex;
-  flex-direction: column;
+  align-self: center;
+  border: 2px solid white;
+  font-size: 1.5rem;
 
-  .score-row {
+  & > div {
     display: flex;
-    gap: 8px;
-    font-size: 1.5rem;
-    font-weight: 500;
+    flex-direction: column;
   }
 
-  .score-label {
-    flex: 0;
-  }
-
-  .team-a-score,
-  .team-b-score {
+  .cell {
     flex: 1;
+    background-color: rgb(67, 79, 94);
+    padding: 4px;
+    border: 1px solid white;
+    min-width: 1.5rem;
+    text-align: center;
+
+    &.set-won {
+      background-color: rgb(45, 184, 63);
+      font-weight: bold;
+    }
   }
 
-  .team-a-score {
-    text-align: right;
-  }
-
-  .team-b-score {
-    text-align: left;
+  .team-color {
+    &.team-blue {
+      background-color: blue;
+    }
+    &.team-red {
+      background-color: red;
+    }
   }
 }

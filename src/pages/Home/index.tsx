@@ -1,10 +1,11 @@
-import type { FC } from 'react';
+import { type FC } from 'react';
 import ActionButtons from '../../components/ActionButtons';
 import GameScore from '../../components/GameScore';
 import MatchScore from '../../components/MatchScore';
 import { useGameScore } from '../../hooks/useGameScore';
 import './index.less';
 
+//TODO add step to select first service and maybe something to load a previous unfinished game
 const Home: FC = () => {
   const {
     score,
@@ -18,16 +19,20 @@ const Home: FC = () => {
     undo,
     canRedo,
     redo,
+    service,
+    changeService,
   } = useGameScore();
+
+  const evenService = (score.points[0] + score.points[1]) % 2 === 0;
 
   return (
     <div className="scoreboard-page">
-      <MatchScore games={score.games} sets={score.sets} />
-
-      <br />
+      <MatchScore sets={score.sets} numberOfSets={3} />
 
       <GameScore
         score={score.parsedPoints}
+        service={service}
+        even={evenService}
         onTeamAScored={teamAScored}
         onTeamBScored={teamBScored}
         isTieBreak={score.isTieBreak}
@@ -37,7 +42,13 @@ const Home: FC = () => {
         matchPointTeamB={matchPointTeamB}
       />
 
-      <ActionButtons canUndo={canUndo} canRedo={canRedo} undo={undo} redo={redo} />
+      <ActionButtons
+        canUndo={canUndo}
+        canRedo={canRedo}
+        undo={undo}
+        redo={redo}
+        changeService={changeService}
+      />
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import type { FC } from 'react';
+import type { Team } from '../domain/Game';
 import './SetPointMessage.less';
 
 type Props = {
-  team: 'A' | 'B';
+  team: Team;
 };
 
 const SetPointMessage: FC<Props> = ({ team }) => {

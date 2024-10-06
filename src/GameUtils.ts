@@ -1,8 +1,33 @@
-import type { Step } from './domain/Game';
+import type { Step, Team } from './domain/Game';
 
-export const isGamePoint = (currentStep: Step): 'A' | 'B' | false => {
+const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
+
+export const getCurrentSet = (step: Step) => step.sets[step.sets.length - 1];
+
+export const isSetFinished = (games: [number, number]) => {
+  const [a, b] = games;
+
+  if (a === b || (a < 6 && b < 6)) {
+    return false;
+  }
+
+  // Tie-break
+  if (a >= 6 && b >= 6 && a !== b) {
+    return true;
+  }
+
+  return Math.abs(a - b) >= 2;
+};
+
+export const isTieBreak = (step: Step) => {
+  const set = getCurrentSet(step);
+
+  return set[0] === 6 && set[1] === 6;
+};
+
+export const isGamePoint = (currentStep: Step): Team | false => {
   // When in tie-break the goal is to reach 7, in normal game it's 4 (15->1, 30->2, 40-> 3)
-  const goal = currentStep.isTieBreak ? 7 : 4;
+  const goal = isTieBreak(currentStep) ? 7 : 4;
 
   const [pointsA, pointsB] = currentStep.points;
 
@@ -19,18 +44,18 @@ export const isGamePoint = (currentStep: Step): 'A' | 'B' | false => {
   return diff > 0 ? 'A' : 'B';
 };
 
-export const isSetPoint = (currentStep: Step): 'A' | 'B' | false => {
+export const isSetPoint = (currentStep: Step): Team | false => {
   const teamWithGamePoint = isGamePoint(currentStep);
 
   if (!teamWithGamePoint) {
     return false;
   }
 
-  const [gamesA, gamesB] = currentStep.games;
-
-  if (currentStep.isTieBreak) {
+  if (isTieBreak(currentStep)) {
     return teamWithGamePoint;
   }
+
+  const [gamesA, gamesB] = getCurrentSet(currentStep);
 
   if (gamesA === gamesB || (gamesA < 5 && gamesB < 5)) {
     return false;
@@ -49,15 +74,18 @@ export const isSetPoint = (currentStep: Step): 'A' | 'B' | false => {
   return false;
 };
 
-export const isMatchPoint = (currentStep: Step, totalSets: 3 | 5 = 3): 'A' | 'B' | false => {
-  const setsGoal = Math.ceil(totalSets / 2);
+export const isMatchPoint = (currentStep: Step, numberOfSets: 3 | 5 = 3): Team | false => {
   const teamWithSetPoint = isSetPoint(currentStep);
 
   if (!teamWithSetPoint) {
     return false;
   }
 
-  const setsWon = currentStep.sets[teamWithSetPoint === 'A' ? 0 : 1];
+  const setsFinished = currentStep.sets.slice(0, -1);
+  const setsWon = setsFinished.filter(([a, b]) =>
+    teamWithSetPoint === 'A' ? a > b : b > a,
+  ).length;
+  const setsGoal = Math.ceil(numberOfSets / 2);
 
   if (setsWon + 1 >= setsGoal) {
     return teamWithSetPoint;
@@ -66,31 +94,30 @@ export const isMatchPoint = (currentStep: Step, totalSets: 3 | 5 = 3): 'A' | 'B'
   return false;
 };
 
-export const pointScored = (currentStep: Step, team: 'A' | 'B'): Step => {
-  const setsUpdated: typeof currentStep.sets = [...currentStep.sets];
-  let gamesUpdated: typeof currentStep.games = [...currentStep.games];
-  let pointsUpdated: typeof currentStep.points = [...currentStep.points];
+export const pointScored = (currentStep: Step, team: Team): Step => {
+  const setsUpdated = clone(currentStep.sets);
+  let pointsUpdated = clone(currentStep.points);
 
   const result = (): Step => ({
     sets: setsUpdated,
-    games: gamesUpdated,
     points: pointsUpdated,
-    isTieBreak: gamesUpdated[0] === 6 && gamesUpdated[1] === 6,
+    // TODO if the set is won then the service should be changed to
+    // the team that served the first point of the match
+    service: team,
   });
 
   const teamIndex = team === 'A' ? 0 : 1;
 
-  const setForTeam = isSetPoint(currentStep);
-  if (setForTeam && setForTeam === team) {
-    setsUpdated[teamIndex] = setsUpdated[teamIndex] + 1;
-    gamesUpdated = [0, 0];
-    pointsUpdated = [0, 0];
-    return result();
-  }
-
   const gameForTeam = isGamePoint(currentStep);
   if (gameForTeam && gameForTeam === team) {
-    gamesUpdated[teamIndex] = gamesUpdated[teamIndex] + 1;
+    const lastSet = setsUpdated[setsUpdated.length - 1];
+    lastSet[teamIndex] += 1;
+
+    //TODO also check if there are more sets to play
+    if (isSetFinished(lastSet)) {
+      setsUpdated.push([0, 0]);
+    }
+
     pointsUpdated = [0, 0];
     return result();
   }

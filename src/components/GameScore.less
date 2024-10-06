@@ -1,5 +1,6 @@
 .game-score {
   display: flex;
+  justify-content: center;
 }
 
 .current-game-scores {
@@ -8,6 +9,7 @@
   background-color: #85db00;
   user-select: none;
   position: relative;
+  max-width: 700px;
 
   .field {
     aspect-ratio: 1;
@@ -48,4 +50,24 @@
 .team-red {
   color: red;
   text-shadow: 0 0 5px black;
+}
+
+.tennis-ball-icon {
+  --margin: 10px;
+
+  position: absolute;
+  width: 3rem;
+
+  &.left {
+    left: var(--margin);
+  }
+  &.right {
+    right: var(--margin);
+  }
+  &.top {
+    top: var(--margin);
+  }
+  &.bottom {
+    bottom: var(--margin);
+  }
 }

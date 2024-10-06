@@ -1,31 +1,34 @@
 import type { Reducer } from 'react';
 import { useCallback, useMemo, useReducer } from 'react';
-import { isMatchPoint, isSetPoint, parseGamePoints, pointScored } from '../GameUtils';
+import { isMatchPoint, isSetPoint, isTieBreak, parseGamePoints, pointScored } from '../GameUtils';
 import type { Game } from '../domain/Game';
 
 const INITIAL_STATE: Game = {
   currentStep: {
-    sets: [0, 0],
-    games: [0, 0],
+    sets: [[0, 0]],
     points: [0, 0],
-    isTieBreak: false,
+    service: 'A',
   },
   historyBack: [],
   historyForward: [],
 };
 
-type Action = 'team_a_scored' | 'team_b_scored' | 'undo' | 'redo';
+type Action = 'team_a_scored' | 'team_b_scored' | 'undo' | 'redo' | 'service_changed';
 
 //TODO implement initial score (saved game)
 export const useGameScore = () => {
   const [state, dispatch] = useReducer<Reducer<Game, Action>>((state, action) => {
+    const pushCurrentStepToHistory = (): Pick<Game, 'historyBack' | 'historyForward'> => ({
+      historyBack: [...state.historyBack, state.currentStep],
+      historyForward: [],
+    });
+
     switch (action) {
       case 'team_a_scored':
       case 'team_b_scored':
         return {
           ...state,
-          historyBack: [...state.historyBack, state.currentStep],
-          historyForward: [],
+          ...pushCurrentStepToHistory(),
           currentStep: pointScored(state.currentStep, action === 'team_a_scored' ? 'A' : 'B'),
         };
 
@@ -44,16 +47,25 @@ export const useGameScore = () => {
           historyBack: [...state.historyBack, state.currentStep],
           historyForward: state.historyForward.slice(0, state.historyForward.length - 1),
         };
+
+      case 'service_changed':
+        return {
+          ...state,
+          ...pushCurrentStepToHistory(),
+          currentStep: {
+            ...state.currentStep,
+            service: state.currentStep.service === 'A' ? 'B' : 'A',
+          },
+        };
     }
   }, INITIAL_STATE);
 
   const score = useMemo(
     () => ({
       sets: state.currentStep.sets,
-      games: state.currentStep.games,
       points: state.currentStep.points,
-      parsedPoints: parseGamePoints(state.currentStep.points, state.currentStep.isTieBreak),
-      isTieBreak: state.currentStep.isTieBreak,
+      parsedPoints: parseGamePoints(state.currentStep.points, isTieBreak(state.currentStep)),
+      isTieBreak: isTieBreak(state.currentStep),
     }),
     [state.currentStep],
   );
@@ -74,6 +86,7 @@ export const useGameScore = () => {
   const teamBScored = useCallback(() => dispatch('team_b_scored'), [dispatch]);
   const undo = useCallback(() => dispatch('undo'), [dispatch]);
   const redo = useCallback(() => dispatch('redo'), [dispatch]);
+  const changeService = useCallback(() => dispatch('service_changed'), [dispatch]);
 
   return {
     score,
@@ -87,5 +100,7 @@ export const useGameScore = () => {
     undo,
     canRedo,
     redo,
+    service: state.currentStep.service,
+    changeService,
   };
 };
