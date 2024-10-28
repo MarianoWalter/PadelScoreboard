@@ -98,12 +98,12 @@ export const pointScored = (currentStep: Step, team: Team): Step => {
   const setsUpdated = clone(currentStep.sets);
   let pointsUpdated = clone(currentStep.points);
 
-  const result = (): Step => ({
+  const result = (newService?: Team): Step => ({
     sets: setsUpdated,
     points: pointsUpdated,
     // TODO if the set is won then the service should be changed to
     // the team that served the first point of the match
-    service: team,
+    service: newService ?? currentStep.service,
   });
 
   const teamIndex = team === 'A' ? 0 : 1;
@@ -119,7 +119,7 @@ export const pointScored = (currentStep: Step, team: Team): Step => {
     }
 
     pointsUpdated = [0, 0];
-    return result();
+    return result(team);
   }
 
   pointsUpdated[teamIndex] = pointsUpdated[teamIndex] + 1;
